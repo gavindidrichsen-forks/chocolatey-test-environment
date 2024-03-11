@@ -1,5 +1,36 @@
 # First Test
 
+Date: 11 March 2024
+
+## Summary
+
+Although the automated validation of the [choco pdk 3.0.1.3](https://community.chocolatey.org/packages/pdk/3.0.1.3) seems to be failing; my local test of the same version using [chocolotey-test-environment](https://github.com/chocolatey-community/chocolatey-test-environment.git) is passing:
+
+```bash
+gavin.didrichsen@Gavins-MacBook-Pro chocolatey-test-environment % vagrant provision
+==> default: Running provisioner: shell...
+    default: Running: shell/PrepareWindows.ps1 as C:\tmp\vagrant-shell.ps1
+    default: IE Enhanced Security Configuration (ESC) has been disabled. Required for One-Click deploy to work appropriately.
+    default: IE first run welcome screen has been disabled. Required for One-Click deploy to work appropriately.
+    default: Setting Windows Update service to Manual startup type.
+==> default: Running provisioner: shell...
+    default: Running: shell/InstallNet4.ps1 as C:\tmp\vagrant-shell.ps1
+    ...
+    ...
+    default: Command line: "C:\ProgramData\chocolatey\choco.exe" install -fdvy pdk --version 3.0.1.3 --allow-downgrade
+    default: Received arguments: install -fdvy pdk --version 3.0.1.3 --allow-downgrade
+    ...
+    ...
+    default:  The install of pdk was successful.
+    default:   Software installed to 'C:\Program Files\Puppet Labs\DevelopmentKit\'
+    default: 
+    default: Chocolatey installed 1/1 packages.
+```
+
+Please refer to the details below.
+
+## Detail
+
 Load the new box on VirtualBox
 
 ```bash
@@ -117,7 +148,6 @@ index 457264c..8b5d815 100644
  $exitCode = $LASTEXITCODE
 gavin.didrichsen@Gavins-MacBook-Pro chocolatey-test-environment % 
 ```
-
 
 Now start the test
 
