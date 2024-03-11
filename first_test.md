@@ -1,3 +1,8 @@
+# First Test
+
+Load the new box on VirtualBox
+
+```bash
 gavin.didrichsen@Gavins-MacBook-Pro chocolatey-test-environment % vagrant up
 zsh: command not found: vagrant
 gavin.didrichsen@Gavins-MacBook-Pro chocolatey-test-environment % brew cask install vagrant
@@ -65,7 +70,11 @@ or on a per folder basis within the Vagrantfile:
     default: WinRM transport: negotiate
 
  *  History restored 
+```
 
+Save a "good" snapshot before doing any testing
+
+```bash
 gavin.didrichsen@Gavins-MacBook-Pro chocolatey-test-environment % vagrant snapshot save good
 ==> default: Snapshotting the machine as 'good'...
 ==> default: Snapshot saved! You can restore the snapshot at any time by
@@ -87,6 +96,32 @@ remote:
 To https://github.com/gavindidrichsen-forks/chocolatey-test-environment.git
  * [new branch]      first_test -> first_test
 branch 'first_test' set up to track 'origin/first_test'.
+```
+
+Make the following change to the `Vagrantfile` before provisioning and running the test
+
+```diff
+gavin.didrichsen@Gavins-MacBook-Pro chocolatey-test-environment % git diff Vagrantfile 
+diff --git a/Vagrantfile b/Vagrantfile
+index 457264c..8b5d815 100644
+--- a/Vagrantfile
++++ b/Vagrantfile
+@@ -135,7 +135,7 @@ Write-Output "Testing package if a line is uncommented."
+ # THIS IS WHAT YOU CHANGE
+ # - uncomment one of the two and edit it appropriately
+ # - See the README for details
+-#choco.exe install -fdvy INSERT_NAME --version INSERT_VERSION  --allow-downgrade
++choco.exe install -fdvy pdk --version 3.0.1.3  --allow-downgrade
+ #choco.exe install -fdvy INSERT_NAME  --allow-downgrade --source "'c:\\packages;http://chocolatey.org/api/v2/'"
+ 
+ $exitCode = $LASTEXITCODE
+gavin.didrichsen@Gavins-MacBook-Pro chocolatey-test-environment % 
+```
+
+
+Now start the test
+
+```bash
 gavin.didrichsen@Gavins-MacBook-Pro chocolatey-test-environment % vagrant provision
 ==> default: Running provisioner: shell...
     default: Running: shell/PrepareWindows.ps1 as C:\tmp\vagrant-shell.ps1
@@ -823,3 +858,50 @@ gavin.didrichsen@Gavins-MacBook-Pro chocolatey-test-environment % vagrant provis
     default: Running Start-ChocolateyProcessAsAdmin -validExitCodes '0 3010 1641' -workingDirectory 'C:\Users\vagrant\AppData\Local\Temp\chocolatey\pdk\3.0.1.3' -statements '/i "C:\Users\vagrant\AppData\Local\Temp\chocolatey\pdk\3.0.1.3\pdk-3.0.1.3-x64.msi" /qn /norestart ' -exeToRun 'C:\Windows\System32\msiexec.exe'
     default: Test-ProcessAdminRights: returning True
     default: Elevating permissions and running ["C:\Windows\System32\msiexec.exe" /i "C:\Users\vagrant\AppData\Local\Temp\chocolatey\pdk\3.0.1.3\pdk-3.0.1.3-x64.msi" /qn /norestart ]. This may take a while, depending on the statements.
+```
+
+Then there was a wait for 5 or 10 minutes, and then:
+
+```bash
+ default: Command ["C:\Windows\System32\msiexec.exe" /i "C:\Users\vagrant\AppData\Local\Temp\chocolatey\pdk\3.0.1.3\pdk-3.0.1.3-x64.msi" /qn /norestart ] exited with '0'.
+    default: Finishing 'Start-ChocolateyProcessAsAdmin'
+    default: pdk has been installed.
+    default: ----------------------------------------------------------------------
+    default: Built-in PowerShell host called with ['[System.Threading.Thread]::CurrentThread.CurrentCulture = '';[System.Threading.Thread]::CurrentThread.CurrentUICulture = '';[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::SystemDefault; & import-module -name 'C:\ProgramData\chocolatey\helpers\chocolateyInstaller.psm1'; & 'C:\ProgramData\chocolatey\helpers\chocolateyScriptRunner.ps1' -packageScript 'C:\ProgramData\chocolatey\lib\pdk\tools\chocolateyinstall.ps1' -installArguments '' -packageParameters '' -preRunHookScripts $null -postRunHookScripts $null'] exited with '0'.
+    default: Calling command ['"C:\Windows\System32\shutdown.exe" /a']
+    default: Command ['"C:\Windows\System32\shutdown.exe" /a'] exited with '1116'
+    default:   pdk may be able to be automatically uninstalled.
+    default: Environment Vars (like PATH) have changed. Close/reopen your shell to
+    default:  see the changes (or in powershell/cmd.exe just type `refreshenv`).
+    default: The following values have been added/changed (may contain sensitive data):
+    default:   * Path='C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\ProgramData\chocolatey\bin;C:\Program Files\Puppet Labs\DevelopmentKit\bin' (Machine)
+    default: Capturing package files in 'C:\ProgramData\chocolatey\lib\pdk'
+    default:  Found 'C:\ProgramData\chocolatey\lib\pdk\pdk.nupkg'
+    default:   with checksum '3F54B34D6E7C60723D5C91BABF9504F4'
+    default:  Found 'C:\ProgramData\chocolatey\lib\pdk\pdk.nuspec'
+    default:   with checksum '354434ABB5CE5BBA6D88459BD0F8E7E3'
+    default:  Found 'C:\ProgramData\chocolatey\lib\pdk\tools\chocolateyinstall.ps1'
+    default:   with checksum '2B785025A5A8F32096AC38E7E20E7B7C'
+    default:  Found 'C:\ProgramData\chocolatey\lib\pdk\tools\LICENSE.md'
+    default:   with checksum '87CBA64D0CA5A3ED4C15D4679A6B928A'
+    default:  Found 'C:\ProgramData\chocolatey\lib\pdk\tools\VERIFICATION.md'
+    default:   with checksum '3641D9461CFDF3218B46B940C8C24D78'
+    default: Attempting to create directory "C:\ProgramData\chocolatey\.chocolatey\pdk.3.0.1.3".
+    default: There was no original file at 'C:\ProgramData\chocolatey\.chocolatey\pdk.3.0.1.3\.registry'
+    default: There was no original file at 'C:\ProgramData\chocolatey\.chocolatey\pdk.3.0.1.3\.files'
+    default: Attempting to delete file "C:\ProgramData\chocolatey\.chocolatey\pdk.3.0.1.3\.extra".
+    default: Attempting to delete file "C:\ProgramData\chocolatey\.chocolatey\pdk.3.0.1.3\.version".
+    default: Attempting to delete file "C:\ProgramData\chocolatey\.chocolatey\pdk.3.0.1.3\.sxs".
+    default: Attempting to delete file "C:\ProgramData\chocolatey\.chocolatey\pdk.3.0.1.3\.pin".
+    default: Sending message 'HandlePackageResultCompletedMessage' out if there are subscribers...
+    default: Attempting to delete file "C:\ProgramData\chocolatey\lib\pdk\.chocolateyPending".
+    default:  The install of pdk was successful.
+    default:   Software installed to 'C:\Program Files\Puppet Labs\DevelopmentKit\'
+    default: 
+    default: Chocolatey installed 1/1 packages.
+    default:  See the log for details (C:\ProgramData\chocolatey\logs\chocolatey.log).
+    default: Sending message 'PostRunMessage' out if there are subscribers...
+    default: Exiting with 0
+    default: Exit code was 0
+gavin.didrichsen@Gavins-MacBook-Pro chocolatey-test-environment % 
+```
